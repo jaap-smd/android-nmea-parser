@@ -11,9 +11,10 @@ jdk:
   - oraclejdk8
   - oraclejdk7
   - openjdk7
+  - openjdk8
 
 before_install:
   - chmod +x gradlew
 
-script:
-  - ./gradlew testDebugUnitTest jacocoTestDebugUnitTestReport coveralls
+after_success:
+  - ./gradlew jacocoTestReport coveralls
