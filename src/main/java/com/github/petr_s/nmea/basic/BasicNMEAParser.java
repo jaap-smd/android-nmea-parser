@@ -98,7 +98,19 @@ public class BasicNMEAParser {
                 return parseGPRMC(handler, sentence);
             }
         });
+        functions.put("GNRMC", new ParsingFunction() {
+            @Override
+            public boolean parse(BasicNMEAHandler handler, String sentence) throws Exception {
+                return parseGPRMC(handler, sentence);
+            }
+        });
         functions.put("GPGGA", new ParsingFunction() {
+            @Override
+            public boolean parse(BasicNMEAHandler handler, String sentence) throws Exception {
+                return parseGPGGA(handler, sentence);
+            }
+        });
+        functions.put("GNGGA", new ParsingFunction() {
             @Override
             public boolean parse(BasicNMEAHandler handler, String sentence) throws Exception {
                 return parseGPGGA(handler, sentence);

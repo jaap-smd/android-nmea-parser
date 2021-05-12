@@ -75,6 +75,22 @@ public class BasicNMEAParserTest {
     }
 
     @Test
+    public void testParseGNRMC() throws Exception {
+        String sentence = "$GNRMC,163407.000,A,5004.7485,N,01423.8956,E,0.04,36.97,180416,,*26";
+        new BasicNMEAParser(handler).parse(sentence);
+
+        verify(handler).onStart();
+        verify(handler).onRMC(eq(1460937600000L),
+                eq(59647000L),
+                doubleThat(roughlyEq(50.07914)),
+                doubleThat(roughlyEq(14.39825)),
+                floatThat(roughlyEq(0.02057f)),
+                floatThat(roughlyEq(36.97f)));
+        verify(handler).onFinished();
+        verifyNoMoreInteractions(handler);
+    }
+
+    @Test
     public void testParseGPRMCBadChecksum() throws Exception {
         String sentence = "$GPRMC,163407.000,A,5004.7485,N,01423.8956,E,0.04,36.97,180416,,*42";
         new BasicNMEAParser(handler).parse(sentence);
@@ -99,6 +115,23 @@ public class BasicNMEAParserTest {
     @Test
     public void testParseGPGGA() throws Exception {
         String sentence = "$GPGGA,163407.000,5004.7485,N,01423.8956,E,1,07,1.7,285.7,M,45.5,M,,0000*5F";
+        new BasicNMEAParser(handler).parse(sentence);
+
+        verify(handler).onStart();
+        verify(handler).onGGA(eq(59647000L),
+                doubleThat(roughlyEq(50.07914)),
+                doubleThat(roughlyEq(14.39825)),
+                floatThat(roughlyEq(240.2f)),
+                eq(BasicNMEAHandler.FixQuality.GPS),
+                eq(7),
+                floatThat(roughlyEq(1.7f)));
+        verify(handler).onFinished();
+        verifyNoMoreInteractions(handler);
+    }
+
+    @Test
+    public void testParseGNGGA() throws Exception {
+        String sentence = "$GNGGA,163407.000,5004.7485,N,01423.8956,E,1,07,1.7,285.7,M,45.5,M,,0000*41";
         new BasicNMEAParser(handler).parse(sentence);
 
         verify(handler).onStart();

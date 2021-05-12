@@ -6,6 +6,8 @@ Light-weight Android Java library for NMEA sentences parsing
 * GPGGA
 * GPGSV
 * GPGSA
+* GNRMC
+* GNGGA
 
 ## NMEA Parser
 flow parser build on top of the [BasicNMEAParser](src/main/java/com/github/petr_s/nmea/basic/BasicNMEAParser.java)
@@ -29,7 +31,7 @@ parser.parse("$GPGGA,163407.000,5004.7485,N,01423.8956,E,1,07,1.7,285.7,M,45.5,M
 
 ### Satellites parsing
 To get a list of gps satellites you have to parse all of GSVs and at least one GSA sentence.
-Since [Android GpsSatellite class](https://developer.android.com/reference/android/location/GpsSatellite.html) is inaccessible (only trough reflection),
+Since [Android GpsSatellite class](https://developer.android.com/reference/android/location/GpsSatellite.html) is inaccessible (only through reflection),
  the package level [GpsSatellite](src/main/java/com/github/petr_s/nmea/GpsSatellite.java) is introduced.
 ```java
 NMEAHandler handler = new NMEAHandler() {
