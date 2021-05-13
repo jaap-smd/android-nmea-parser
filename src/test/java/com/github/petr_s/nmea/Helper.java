@@ -14,11 +14,10 @@ public class Helper {
     public static ArgumentMatcher<Double> roughlyEq(final double expected, final double delta) {
         return new ArgumentMatcher<Double>() {
             @Override
-            public boolean matches(Object argument) {
+            public boolean matches(Double argument) {
                 return Math.abs(expected - (Double) argument) <= delta;
             }
 
-            @Override
             public void describeTo(Description description) {
                 description.appendText(Double.toString(expected) + "±" + Double.toString(delta));
             }
@@ -32,11 +31,10 @@ public class Helper {
     public static ArgumentMatcher<Float> roughlyEq(final float expected, final float delta) {
         return new ArgumentMatcher<Float>() {
             @Override
-            public boolean matches(Object argument) {
+            public boolean matches(Float argument) {
                 return Math.abs(expected - (Float) argument) <= delta;
             }
 
-            @Override
             public void describeTo(Description description) {
                 description.appendText(Float.toString(expected) + "±" + Float.toString(delta));
             }
@@ -46,11 +44,10 @@ public class Helper {
     public static <T> ArgumentMatcher<Set> eq(final Set<T> expected) {
         return new ArgumentMatcher<Set>() {
             @Override
-            public boolean matches(Object argument) {
+            public boolean matches(Set argument) {
                 return argument.equals(expected);
             }
 
-            @Override
             public void describeTo(Description description) {
                 description.appendText(expected.toString());
             }
@@ -60,11 +57,10 @@ public class Helper {
     public static <T> ArgumentMatcher<List> eq(final List<T> expected) {
         return new ArgumentMatcher<List>() {
             @Override
-            public boolean matches(Object argument) {
+            public boolean matches(List argument) {
                 return argument.equals(expected);
             }
 
-            @Override
             public void describeTo(Description description) {
                 description.appendText(expected.toString());
             }
