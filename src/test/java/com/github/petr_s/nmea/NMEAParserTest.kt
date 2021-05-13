@@ -24,7 +24,7 @@ class NMEAParserTest {
     var parser: NMEAParser? = null
     @Before
     fun setUp() {
-        parser = NMEAParser(handler, locationFactory)
+        parser = NMEAParser(handler, locationFactory!!)
     }
 
     @Test(expected = NullPointerException::class)
