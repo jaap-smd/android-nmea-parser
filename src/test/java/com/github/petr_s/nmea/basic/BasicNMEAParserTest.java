@@ -53,7 +53,11 @@ public class BasicNMEAParserTest {
                 doubleThat(roughlyEq(50.07914)),
                 doubleThat(roughlyEq(14.39825)),
                 floatThat(roughlyEq(0.02057f)),
-                floatThat(roughlyEq(36.97f)));
+                floatThat(roughlyEq(36.97f)),
+                isNull(Float.class),
+                isNull(String.class),
+                isNull(String.class),
+                eq(false));
         verify(handler).onFinished();
         verifyNoMoreInteractions(handler);
     }
@@ -69,7 +73,11 @@ public class BasicNMEAParserTest {
                 doubleThat(roughlyEq(50.075415)),
                 doubleThat(roughlyEq(14.404795)),
                 floatThat(roughlyEq(0.142501f)),
-                floatThat(roughlyEq(0.0f)));
+                floatThat(roughlyEq(0.0f)),
+                isNull(Float.class),
+                isNull(String.class),
+                eq("A"),
+                eq(false));
         verify(handler).onFinished();
         verifyNoMoreInteractions(handler);
     }
@@ -85,7 +93,11 @@ public class BasicNMEAParserTest {
                 doubleThat(roughlyEq(50.07914)),
                 doubleThat(roughlyEq(14.39825)),
                 floatThat(roughlyEq(0.02057f)),
-                floatThat(roughlyEq(36.97f)));
+                floatThat(roughlyEq(36.97f)),
+                isNull(Float.class),
+                isNull(String.class),
+                isNull(String.class),
+                eq(true));
         verify(handler).onFinished();
         verifyNoMoreInteractions(handler);
     }
@@ -124,7 +136,10 @@ public class BasicNMEAParserTest {
                 floatThat(roughlyEq(240.2f)),
                 eq(BasicNMEAHandler.FixQuality.GPS),
                 eq(7),
-                floatThat(roughlyEq(1.7f)));
+                floatThat(roughlyEq(1.7f)),
+                isNull(Float.class),
+                eq(0),
+                eq(false));
         verify(handler).onFinished();
         verifyNoMoreInteractions(handler);
     }
@@ -141,7 +156,10 @@ public class BasicNMEAParserTest {
                 floatThat(roughlyEq(240.2f)),
                 eq(BasicNMEAHandler.FixQuality.GPS),
                 eq(7),
-                floatThat(roughlyEq(1.7f)));
+                floatThat(roughlyEq(1.7f)),
+                isNull(Float.class),
+                eq(0),
+                eq(true));
         verify(handler).onFinished();
         verifyNoMoreInteractions(handler);
     }
@@ -158,7 +176,10 @@ public class BasicNMEAParserTest {
                 floatThat(roughlyEq(128.2f)),
                 eq(BasicNMEAHandler.FixQuality.GPS),
                 eq(11),
-                floatThat(roughlyEq(0.6f)));
+                floatThat(roughlyEq(0.6f)),
+                isNull(Float.class),
+                isNull(Integer.class),
+                eq(false));
         verify(handler).onFinished();
         verifyNoMoreInteractions(handler);
     }
@@ -281,7 +302,8 @@ public class BasicNMEAParserTest {
         new BasicNMEAParser(handler).parse(sentence);
 
         verify(handler).onStart();
-        verify(handler).onGSA(eq(Fix3D),
+        verify(handler).onGSA(eq("A"),
+                eq(Fix3D),
                 argThat(eq(new HashSet<>(Arrays.asList(new Integer[]{2, 5, 21, 25, 26, 12, 29, 31})))),
                 floatThat(roughlyEq(1.6f)),
                 floatThat(roughlyEq(1.0f)),

@@ -6,7 +6,7 @@ public interface BasicNMEAHandler {
     void onStart();
 
     /***
-     * Called on GPRMC parsed.
+     * Called on GPRMC and GNRMC parsed.
      *
      * @param date      milliseconds since midnight, January 1, 1970 UTC.
      * @param time      actual UTC time (without date)
@@ -14,11 +14,15 @@ public interface BasicNMEAHandler {
      * @param longitude angular x position on the Earth.
      * @param speed     in meters per second.
      * @param direction angular bearing value to the North.
+     * @param magVar    magnetic variation, degrees. Note: that this field is the actual magnetic variation and will always be positive.
+     * @param magVarDir direction of magnetic variation E/W: Easterly variation (E) subtracts from True course, Westerly variation (W) adds to True course.
+     * @param modeInc   positioning system mode indicator: A - Autonomous, D - Differential, E - Estimated (dead reckoning) mode, M - Manual input, N - Data not valid
+     * @param isGN      returns true if sentence was GNRMC, false is sentence was GPRMC
      */
-    void onRMC(long date, long time, double latitude, double longitude, float speed, float direction);
+    void onRMC(long date, long time, double latitude, double longitude, float speed, float direction, Float magVar, String magVarDir, String modeInc, boolean isGN);
 
     /***
-     * Called on GPGGA parsed.
+     * Called on GPGGA and GNGGA parsed.
      *
      * @param time        actual UTC time (without date)
      * @param latitude    angular y position on the Earth.
@@ -27,8 +31,10 @@ public interface BasicNMEAHandler {
      * @param quality     fix-quality type {@link FixQuality}
      * @param satellites  actual number of satellites
      * @param hdop        horizontal dilution of precision
+     * @param age         age
+     * @param isGN        returns true if sentence was GNGGA, false is sentence was GPGGA
      */
-    void onGGA(long time, double latitude, double longitude, float altitude, FixQuality quality, int satellites, float hdop);
+    void onGGA(long time, double latitude, double longitude, float altitude, FixQuality quality, int satellites, float hdop, Float age, Integer station, boolean isGN);
 
     /***
      * Called on GPGSV parsed.
@@ -46,13 +52,14 @@ public interface BasicNMEAHandler {
     /***
      * Called on GPGSA parsed.
      *
+     * @param mode where the mode of operation is automatically or manually set, A = Automatic 2D/3D, M = Manual, forced to operate in 2D or 3D
      * @param type type of fix
      * @param prns set of satellites used for the current fix
      * @param pdop position dilution of precision
      * @param hdop horizontal dilution of precision
      * @param vdop vertical dilution of precision
      */
-    void onGSA(FixType type, Set<Integer> prns, float pdop, float hdop, float vdop);
+    void onGSA(String mode, FixType type, Set<Integer> prns, float pdop, float hdop, float vdop);
 
     void onUnrecognized(String sentence);
 

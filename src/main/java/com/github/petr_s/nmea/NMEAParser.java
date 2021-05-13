@@ -117,7 +117,7 @@ public class NMEAParser implements BasicNMEAHandler {
     }
 
     @Override
-    public synchronized void onRMC(long date, long time, double latitude, double longitude, float speed, float direction) {
+    public synchronized void onRMC(long date, long time, double latitude, double longitude, float speed, float direction, Float magVar, String magVarDir, String faa, boolean isGN) {
         newLocation(time);
 
         location.setTime(date | time);
@@ -128,7 +128,7 @@ public class NMEAParser implements BasicNMEAHandler {
     }
 
     @Override
-    public synchronized void onGGA(long time, double latitude, double longitude, float altitude, FixQuality quality, int satellites, float hdop) {
+    public synchronized void onGGA(long time, double latitude, double longitude, float altitude, FixQuality quality, int satellites, float hdop, Float age, Integer station, boolean isGN) {
         newLocation(time);
 
         location.setLatitude(latitude);
@@ -147,7 +147,7 @@ public class NMEAParser implements BasicNMEAHandler {
     }
 
     @Override
-    public void onGSA(FixType type, Set<Integer> prns, float pdop, float hdop, float vdop) {
+    public void onGSA(String mode, FixType type, Set<Integer> prns, float pdop, float hdop, float vdop) {
         activeSatellites = prns;
 
         yieldSatellites();
