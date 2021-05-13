@@ -1,9 +1,11 @@
 apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
 //apply plugin: 'jacoco'
 //apply plugin: 'com.github.kt3k.coveralls'
 
 
 buildscript {
+    ext.kotlin_version = '1.5.0'
     repositories {
         mavenCentral()
         google()
@@ -14,6 +16,7 @@ buildscript {
 
     dependencies {
         classpath 'com.android.tools.build:gradle:4.2.0'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
 //        classpath "gradle.plugin.org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.12.0"
     }
 }
@@ -45,7 +48,8 @@ repositories {
 }
 
 dependencies {
-    testImplementation 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.13.2'
     testImplementation "org.mockito:mockito-core:1.9.5"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
 
