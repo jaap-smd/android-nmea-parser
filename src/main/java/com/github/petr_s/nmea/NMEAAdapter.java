@@ -16,7 +16,7 @@ public class NMEAAdapter implements NMEAHandler {
     }
 
     @Override
-    public void onSatellites(List<GpsSatellite> satellites) {
+    public void onSatellites(List<? extends GpsSatellite> satellites) {
 
     }
 
