@@ -87,45 +87,46 @@ public class BasicNMEAParser {
             CAP_FLOAT + "?" + COMMA +
             CAP_FLOAT + "?" + COMMA +
             CAP_FLOAT + "?");
-    private static HashMap<String, ParsingFunction> functions = new HashMap<>();
+    private static HashMap<StringType, ParsingFunction> functions = new HashMap<>();
 
     static {
         TIME_FORMAT.setTimeZone(TimeZone.getTimeZone("UTC"));
         DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("UTC"));
-        functions.put("GPRMC", new ParsingFunction() {
+        functions.put(StringType.GPRMC, new ParsingFunction() {
+
             @Override
             public boolean parse(BasicNMEAHandler handler, String sentence) throws Exception {
-                return parseGPRMC(handler, sentence);
+                return parseGPRMC(handler, sentence, StringType.GPRMC);
             }
         });
-        functions.put("GNRMC", new ParsingFunction() {
+        functions.put(StringType.GNRMC, new ParsingFunction() {
             @Override
             public boolean parse(BasicNMEAHandler handler, String sentence) throws Exception {
-                return parseGPRMC(handler, sentence);
+                return parseGPRMC(handler, sentence, StringType.GNRMC);
             }
         });
-        functions.put("GPGGA", new ParsingFunction() {
+        functions.put(StringType.GPGGA, new ParsingFunction() {
             @Override
             public boolean parse(BasicNMEAHandler handler, String sentence) throws Exception {
-                return parseGPGGA(handler, sentence);
+                return parseGPGGA(handler, sentence, StringType.GPGGA);
             }
         });
-        functions.put("GNGGA", new ParsingFunction() {
+        functions.put(StringType.GNGGA, new ParsingFunction() {
             @Override
             public boolean parse(BasicNMEAHandler handler, String sentence) throws Exception {
-                return parseGPGGA(handler, sentence);
+                return parseGPGGA(handler, sentence, StringType.GNGGA);
             }
         });
-        functions.put("GPGSV", new ParsingFunction() {
+        functions.put(StringType.GPGSV, new ParsingFunction() {
             @Override
             public boolean parse(BasicNMEAHandler handler, String sentence) throws Exception {
-                return parseGPGSV(handler, sentence);
+                return parseGPGSV(handler, sentence, StringType.GPGSV);
             }
         });
-        functions.put("GPGSA", new ParsingFunction() {
+        functions.put(StringType.GPGSA, new ParsingFunction() {
             @Override
             public boolean parse(BasicNMEAHandler handler, String sentence) throws Exception {
-                return parseGPGSA(handler, sentence);
+                return parseGPGSA(handler, sentence, StringType.GPGSA);
             }
         });
     }
@@ -140,9 +141,10 @@ public class BasicNMEAParser {
         }
     }
 
-    private static boolean parseGPRMC(BasicNMEAHandler handler, String sentence) throws Exception {
+    private static boolean parseGPRMC(BasicNMEAHandler handler, String sentence, StringType type) throws Exception {
         ExMatcher matcher = new ExMatcher(GPRMC.matcher(sentence));
         if (matcher.matches()) {
+            boolean isGN = type == StringType.GNRMC;
             long time = TIME_FORMAT.parse(matcher.nextString("time") + "0").getTime();
             Float ms = matcher.nextFloat("time-ms");
             if (ms != null) {
@@ -160,14 +162,24 @@ public class BasicNMEAParser {
                 long date = DATE_FORMAT.parse(matcher.nextString("date")).getTime();
                 Float magVar = matcher.nextFloat("magnetic-variation");
                 String magVarDir = matcher.nextString("direction");
-                String faa = matcher.nextString("faa");
+
+                /*
+                 * Positioning system mode indicator
+                 *
+                 */
+                String modeIndicator = matcher.nextString("faa");
 
                 handler.onRMC(date,
                         time,
                         vDir.equals(VDir.N) ? latitude : -latitude,
                         hDir.equals(HDir.E) ? longitude : -longitude,
                         speed,
-                        direction);
+                        direction,
+                        magVar,
+                        magVarDir,
+                        modeIndicator,
+                        isGN
+                        );
 
                 return true;
             }
@@ -176,9 +188,12 @@ public class BasicNMEAParser {
         return false;
     }
 
-    private static boolean parseGPGGA(BasicNMEAHandler handler, String sentence) throws Exception {
+    private static boolean parseGPGGA(BasicNMEAHandler handler, String sentence, StringType type) throws Exception {
         ExMatcher matcher = new ExMatcher(GPGGA.matcher(sentence));
         if (matcher.matches()) {
+
+            boolean isGN = type == StringType.GNGGA;
+
             long time = TIME_FORMAT.parse(matcher.nextString("time") + "0").getTime();
             Float ms = matcher.nextFloat("time-ms");
             if (ms != null) {
@@ -204,7 +219,10 @@ public class BasicNMEAParser {
                     altitude - separation,
                     quality,
                     satellites,
-                    hdop);
+                    hdop,
+                    age,
+                    station,
+                    isGN);
 
             return true;
         }
@@ -212,7 +230,7 @@ public class BasicNMEAParser {
         return false;
     }
 
-    private static boolean parseGPGSV(BasicNMEAHandler handler, String sentence) throws Exception {
+    private static boolean parseGPGSV(BasicNMEAHandler handler, String sentence, StringType type) throws Exception {
         ExMatcher matcher = new ExMatcher(GPGSV.matcher(sentence));
         if (matcher.matches()) {
             int sentences = matcher.nextInt("n-sentences");
@@ -235,9 +253,13 @@ public class BasicNMEAParser {
         return false;
     }
 
-    private static boolean parseGPGSA(BasicNMEAHandler handler, String sentence) {
+    private static boolean parseGPGSA(BasicNMEAHandler handler, String sentence, StringType stringType) {
         ExMatcher matcher = new ExMatcher(GPGSA.matcher(sentence));
         if (matcher.matches()) {
+            /*
+             * A = Automatic 2D/3D
+             * M = Manual, forced to operate in 2D or 3D
+             */
             Mode mode = Mode.valueOf(matcher.nextString("mode"));
             FixType type = FixType.values()[matcher.nextInt("fix-type")];
             Set<Integer> prns = new HashSet<>();
@@ -250,8 +272,9 @@ public class BasicNMEAParser {
             float pdop = matcher.nextFloat("pdop");
             float hdop = matcher.nextFloat("hdop");
             float vdop = matcher.nextFloat("vdop");
+            //TODO parse systemID
 
-            handler.onGSA(type, prns, pdop, hdop, vdop);
+            handler.onGSA(mode.toString(), type, prns, pdop, hdop, vdop);
 
             return true;
         }
@@ -292,13 +315,14 @@ public class BasicNMEAParser {
             ExMatcher matcher = new ExMatcher(GENERAL_SENTENCE.matcher(sentence));
             if (matcher.matches()) {
                 String type = matcher.nextString("type");
+                StringType stringType =StringType.valueOf(type);
                 String content = matcher.nextString("content");
                 int expected_checksum = matcher.nextHexInt("checksum");
                 int actual_checksum = calculateChecksum(sentence);
 
                 if (actual_checksum != expected_checksum) {
                     handler.onBadChecksum(expected_checksum, actual_checksum);
-                } else if (!functions.containsKey(type) || !functions.get(type).parse(handler, content)) {
+                } else if (!functions.containsKey(stringType) || !functions.get(stringType).parse(handler, content)) {
                     handler.onUnrecognized(sentence);
                 }
             } else {
@@ -326,7 +350,7 @@ public class BasicNMEAParser {
         S,
     }
 
-    private enum Mode {
+    public enum Mode {
         A,
         M
     }
@@ -338,6 +362,15 @@ public class BasicNMEAParser {
         M,
         S,
         N
+    }
+
+    private enum StringType {
+        GPGGA,
+        GPRMC,
+        GPGSV,
+        GPGSA,
+        GNRMC,
+        GNGGA
     }
 
     private static abstract class ParsingFunction {

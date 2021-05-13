@@ -9,12 +9,12 @@ public class BasicNMEAAdapter implements BasicNMEAHandler {
     }
 
     @Override
-    public void onRMC(long date, long time, double latitude, double longitude, float speed, float direction) {
+    public void onRMC(long date, long time, double latitude, double longitude, float speed, float direction, Float magVar, String magVarDir, String modeInc, boolean isGN) {
 
     }
 
     @Override
-    public void onGGA(long time, double latitude, double longitude, float altitude, FixQuality quality, int satellites, float hdop) {
+    public void onGGA(long time, double latitude, double longitude, float altitude, FixQuality quality, int satellites, float hdop, Float age, Integer station, boolean isGN) {
 
     }
 
@@ -24,7 +24,7 @@ public class BasicNMEAAdapter implements BasicNMEAHandler {
     }
 
     @Override
-    public void onGSA(FixType type, Set<Integer> prns, float pdop, float hdop, float vdop) {
+    public void onGSA(String mode, FixType type, Set<Integer> prns, float pdop, float hdop, float vdop) {
 
     }
 
