@@ -350,7 +350,7 @@ public class BasicNMEAParser {
         S,
     }
 
-    public enum Mode {
+    private enum Mode {
         A,
         M
     }
