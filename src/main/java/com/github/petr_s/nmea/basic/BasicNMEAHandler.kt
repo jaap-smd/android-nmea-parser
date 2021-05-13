@@ -1,9 +1,7 @@
-package com.github.petr_s.nmea.basic;
+package com.github.petr_s.nmea.basic
 
-import java.util.Set;
-
-public interface BasicNMEAHandler {
-    void onStart();
+interface BasicNMEAHandler {
+    fun onStart()
 
     /***
      * Called on GPRMC and GNRMC parsed.
@@ -19,7 +17,18 @@ public interface BasicNMEAHandler {
      * @param modeInc   positioning system mode indicator: A - Autonomous, D - Differential, E - Estimated (dead reckoning) mode, M - Manual input, N - Data not valid
      * @param isGN      returns true if sentence was GNRMC, false is sentence was GPRMC
      */
-    void onRMC(long date, long time, double latitude, double longitude, float speed, float direction, Float magVar, String magVarDir, String modeInc, boolean isGN);
+    fun onRMC(
+        date: Long,
+        time: Long,
+        latitude: Double,
+        longitude: Double,
+        speed: Float,
+        direction: Float,
+        magVar: Float?,
+        magVarDir: String?,
+        modeInc: String?,
+        isGN: Boolean
+    )
 
     /***
      * Called on GPGGA and GNGGA parsed.
@@ -28,13 +37,24 @@ public interface BasicNMEAHandler {
      * @param latitude    angular y position on the Earth.
      * @param longitude   angular x position on the Earth.
      * @param altitude    altitude in meters above corrected geoid
-     * @param quality     fix-quality type {@link FixQuality}
+     * @param quality     fix-quality type [FixQuality]
      * @param satellites  actual number of satellites
      * @param hdop        horizontal dilution of precision
      * @param age         age
      * @param isGN        returns true if sentence was GNGGA, false is sentence was GPGGA
      */
-    void onGGA(long time, double latitude, double longitude, float altitude, FixQuality quality, int satellites, float hdop, Float age, Integer station, boolean isGN);
+    fun onGGA(
+        time: Long,
+        latitude: Double,
+        longitude: Double,
+        altitude: Float,
+        quality: FixQuality?,
+        satellites: Int,
+        hdop: Float,
+        age: Float?,
+        station: Int?,
+        isGN: Boolean
+    )
 
     /***
      * Called on GPGSV parsed.
@@ -47,7 +67,7 @@ public interface BasicNMEAHandler {
      * @param azimuth    azimuth in degrees
      * @param snr        signal to noise ratio
      */
-    void onGSV(int satellites, int index, int prn, float elevation, float azimuth, int snr);
+    fun onGSV(satellites: Int, index: Int, prn: Int, elevation: Float, azimuth: Float, snr: Int)
 
     /***
      * Called on GPGSA parsed.
@@ -59,17 +79,21 @@ public interface BasicNMEAHandler {
      * @param hdop horizontal dilution of precision
      * @param vdop vertical dilution of precision
      */
-    void onGSA(String mode, FixType type, Set<Integer> prns, float pdop, float hdop, float vdop);
+    fun onGSA(
+        mode: String?,
+        type: FixType?,
+        prns: Set<Int?>?,
+        pdop: Float,
+        hdop: Float,
+        vdop: Float
+    )
 
-    void onUnrecognized(String sentence);
+    fun onUnrecognized(sentence: String?)
+    fun onBadChecksum(expected: Int, actual: Int)
+    fun onException(e: Exception?)
+    fun onFinished()
 
-    void onBadChecksum(int expected, int actual);
-
-    void onException(Exception e);
-
-    void onFinished();
-
-    enum FixQuality {
+    enum class FixQuality(val value: Int) {
         Invalid(0),
         GPS(1),
         DGPS(2),
@@ -79,24 +103,12 @@ public interface BasicNMEAHandler {
         Estimated(6),
         Manual(7),
         Simulation(8);
-
-        public final int value;
-
-        FixQuality(int value) {
-            this.value = value;
-        }
     }
 
-    enum FixType {
+    enum class FixType(val value: Int) {
         Invalid(0),
         None(1),
         Fix2D(2),
         Fix3D(3);
-
-        public final int value;
-
-        FixType(int value) {
-            this.value = value;
-        }
     }
 }
