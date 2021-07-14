@@ -123,10 +123,22 @@ public class BasicNMEAParser {
                 return parseGPGSV(handler, sentence, StringType.GPGSV);
             }
         });
+        functions.put(StringType.GNGSV, new ParsingFunction() {
+            @Override
+            public boolean parse(BasicNMEAHandler handler, String sentence) throws Exception {
+                return parseGPGSV(handler, sentence, StringType.GNGSV);
+            }
+        });
         functions.put(StringType.GPGSA, new ParsingFunction() {
             @Override
             public boolean parse(BasicNMEAHandler handler, String sentence) throws Exception {
                 return parseGPGSA(handler, sentence, StringType.GPGSA);
+            }
+        });
+        functions.put(StringType.GNGSA, new ParsingFunction() {
+            @Override
+            public boolean parse(BasicNMEAHandler handler, String sentence) throws Exception {
+                return parseGPGSA(handler, sentence, StringType.GNGSA);
             }
         });
     }
@@ -233,6 +245,9 @@ public class BasicNMEAParser {
     private static boolean parseGPGSV(BasicNMEAHandler handler, String sentence, StringType type) throws Exception {
         ExMatcher matcher = new ExMatcher(GPGSV.matcher(sentence));
         if (matcher.matches()) {
+
+            boolean isGN = type == StringType.GNGSV;
+
             int sentences = matcher.nextInt("n-sentences");
             int index = matcher.nextInt("sentence-index") - 1;
             int satellites = matcher.nextInt("n-satellites");
@@ -244,7 +259,7 @@ public class BasicNMEAParser {
                 Integer snr = matcher.nextInt("snr");
 
                 if (prn != null) {
-                    handler.onGSV(satellites, index * 4 + i, prn, elevation, azimuth, snr);
+                    handler.onGSV(satellites, index * 4 + i, prn, elevation, azimuth, snr, isGN);
                 }
             }
 
@@ -256,6 +271,10 @@ public class BasicNMEAParser {
     private static boolean parseGPGSA(BasicNMEAHandler handler, String sentence, StringType stringType) {
         ExMatcher matcher = new ExMatcher(GPGSA.matcher(sentence));
         if (matcher.matches()) {
+
+
+            boolean isGN = stringType == StringType.GNGSA;
+
             /*
              * A = Automatic 2D/3D
              * M = Manual, forced to operate in 2D or 3D
@@ -274,7 +293,7 @@ public class BasicNMEAParser {
             float vdop = matcher.nextFloat("vdop");
             //TODO parse systemID
 
-            handler.onGSA(mode.toString(), type, prns, pdop, hdop, vdop);
+            handler.onGSA(mode.toString(), type, prns, pdop, hdop, vdop, isGN);
 
             return true;
         }
@@ -369,8 +388,11 @@ public class BasicNMEAParser {
         GPRMC,
         GPGSV,
         GPGSA,
+
+        GNGGA,
         GNRMC,
-        GNGGA
+        GNGSV,
+        GNGSA,
     }
 
     private static abstract class ParsingFunction {

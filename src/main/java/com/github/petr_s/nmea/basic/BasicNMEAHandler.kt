@@ -67,7 +67,7 @@ interface BasicNMEAHandler {
      * @param azimuth    azimuth in degrees
      * @param snr        signal to noise ratio
      */
-    fun onGSV(satellites: Int, index: Int, prn: Int, elevation: Float, azimuth: Float, snr: Int)
+    fun onGSV(satellites: Int, index: Int, prn: Int, elevation: Float, azimuth: Float, snr: Int, isGN: Boolean)
 
     /***
      * Called on GPGSA parsed.
@@ -85,7 +85,8 @@ interface BasicNMEAHandler {
         prns: Set<Int?>?,
         pdop: Float,
         hdop: Float,
-        vdop: Float
+        vdop: Float,
+        isGN: Boolean
     )
 
     fun onUnrecognized(sentence: String?)

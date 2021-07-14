@@ -206,7 +206,8 @@ class BasicNMEAParserTest {
             ArgumentMatchers.eq(29),
             ArgumentMatchers.eq(86.0f),
             ArgumentMatchers.eq(273.0f),
-            ArgumentMatchers.eq(30)
+            ArgumentMatchers.eq(30),
+            ArgumentMatchers.eq(false)
         )
         Mockito.verify(handler).onGSV(
             ArgumentMatchers.eq(11),
@@ -214,7 +215,8 @@ class BasicNMEAParserTest {
             ArgumentMatchers.eq(25),
             ArgumentMatchers.eq(60.0f),
             ArgumentMatchers.eq(110.0f),
-            ArgumentMatchers.eq(38)
+            ArgumentMatchers.eq(38),
+            ArgumentMatchers.eq(false)
         )
         Mockito.verify(handler).onGSV(
             ArgumentMatchers.eq(11),
@@ -222,7 +224,8 @@ class BasicNMEAParserTest {
             ArgumentMatchers.eq(31),
             ArgumentMatchers.eq(52.0f),
             ArgumentMatchers.eq(278.0f),
-            ArgumentMatchers.eq(47)
+            ArgumentMatchers.eq(47),
+            ArgumentMatchers.eq(false)
         )
         Mockito.verify(handler).onGSV(
             ArgumentMatchers.eq(11),
@@ -230,7 +233,8 @@ class BasicNMEAParserTest {
             ArgumentMatchers.eq(2),
             ArgumentMatchers.eq(28.0f),
             ArgumentMatchers.eq(50.0f),
-            ArgumentMatchers.eq(39)
+            ArgumentMatchers.eq(39),
+            ArgumentMatchers.eq(false)
         )
         Mockito.verify(handler).onFinished()
         Mockito.verifyNoMoreInteractions(handler)
@@ -250,7 +254,8 @@ class BasicNMEAParserTest {
             ArgumentMatchers.eq(29),
             ArgumentMatchers.eq(86.0f),
             ArgumentMatchers.eq(273.0f),
-            ArgumentMatchers.eq(30)
+            ArgumentMatchers.eq(30),
+            ArgumentMatchers.eq(false)
         )
         Mockito.verify(handler).onGSV(
             ArgumentMatchers.eq(11),
@@ -258,7 +263,8 @@ class BasicNMEAParserTest {
             ArgumentMatchers.eq(25),
             ArgumentMatchers.eq(60.0f),
             ArgumentMatchers.eq(110.0f),
-            ArgumentMatchers.eq(38)
+            ArgumentMatchers.eq(38),
+            ArgumentMatchers.eq(false)
         )
         Mockito.verify(handler).onGSV(
             ArgumentMatchers.eq(11),
@@ -266,7 +272,8 @@ class BasicNMEAParserTest {
             ArgumentMatchers.eq(31),
             ArgumentMatchers.eq(52.0f),
             ArgumentMatchers.eq(278.0f),
-            ArgumentMatchers.eq(47)
+            ArgumentMatchers.eq(47),
+            ArgumentMatchers.eq(false)
         )
         Mockito.verify(handler).onGSV(
             ArgumentMatchers.eq(11),
@@ -274,7 +281,8 @@ class BasicNMEAParserTest {
             ArgumentMatchers.eq(2),
             ArgumentMatchers.eq(28.0f),
             ArgumentMatchers.eq(50.0f),
-            ArgumentMatchers.eq(39)
+            ArgumentMatchers.eq(39),
+            ArgumentMatchers.eq(false)
         )
         Mockito.verify(handler).onGSV(
             ArgumentMatchers.eq(11),
@@ -282,7 +290,8 @@ class BasicNMEAParserTest {
             ArgumentMatchers.eq(12),
             ArgumentMatchers.eq(23.0f),
             ArgumentMatchers.eq(110.0f),
-            ArgumentMatchers.eq(34)
+            ArgumentMatchers.eq(34),
+            ArgumentMatchers.eq(false)
         )
         Mockito.verify(handler).onGSV(
             ArgumentMatchers.eq(11),
@@ -290,7 +299,8 @@ class BasicNMEAParserTest {
             ArgumentMatchers.eq(26),
             ArgumentMatchers.eq(18.0f),
             ArgumentMatchers.eq(295.0f),
-            ArgumentMatchers.eq(29)
+            ArgumentMatchers.eq(29),
+            ArgumentMatchers.eq(false)
         )
         Mockito.verify(handler).onGSV(
             ArgumentMatchers.eq(11),
@@ -298,7 +308,8 @@ class BasicNMEAParserTest {
             ArgumentMatchers.eq(21),
             ArgumentMatchers.eq(17.0f),
             ArgumentMatchers.eq(190.0f),
-            ArgumentMatchers.eq(30)
+            ArgumentMatchers.eq(30),
+            ArgumentMatchers.eq(false)
         )
         Mockito.verify(handler).onGSV(
             ArgumentMatchers.eq(11),
@@ -306,7 +317,8 @@ class BasicNMEAParserTest {
             ArgumentMatchers.eq(5),
             ArgumentMatchers.eq(11.0f),
             ArgumentMatchers.eq(92.0f),
-            ArgumentMatchers.eq(25)
+            ArgumentMatchers.eq(25),
+            ArgumentMatchers.eq(false)
         )
         Mockito.verify(handler).onGSV(
             ArgumentMatchers.eq(11),
@@ -314,7 +326,8 @@ class BasicNMEAParserTest {
             ArgumentMatchers.eq(14),
             ArgumentMatchers.eq(2.0f),
             ArgumentMatchers.eq(232.0f),
-            ArgumentMatchers.eq(13)
+            ArgumentMatchers.eq(13),
+            ArgumentMatchers.eq(false)
         )
         Mockito.verify(handler).onGSV(
             ArgumentMatchers.eq(11),
@@ -322,7 +335,8 @@ class BasicNMEAParserTest {
             ArgumentMatchers.eq(23),
             ArgumentMatchers.eq(2.0f),
             ArgumentMatchers.eq(346.0f),
-            ArgumentMatchers.eq(12)
+            ArgumentMatchers.eq(12),
+            ArgumentMatchers.eq(false)
         )
         Mockito.verify(handler).onGSV(
             ArgumentMatchers.eq(11),
@@ -330,7 +344,8 @@ class BasicNMEAParserTest {
             ArgumentMatchers.eq(20),
             ArgumentMatchers.eq(1.0f),
             ArgumentMatchers.eq(135.0f),
-            ArgumentMatchers.eq(13)
+            ArgumentMatchers.eq(13),
+            ArgumentMatchers.eq(false)
         )
         Mockito.verify(handler, Mockito.times(3)).onFinished()
         Mockito.verifyNoMoreInteractions(handler)
@@ -364,7 +379,8 @@ class BasicNMEAParserTest {
             ) as Set<Int?>?,
             ArgumentMatchers.floatThat(Helper.roughlyEq(1.6f)),
             ArgumentMatchers.floatThat(Helper.roughlyEq(1.0f)),
-            ArgumentMatchers.floatThat(Helper.roughlyEq(1.3f))
+            ArgumentMatchers.floatThat(Helper.roughlyEq(1.3f)),
+            ArgumentMatchers.eq(false)
         )
         Mockito.verify(handler).onFinished()
         Mockito.verifyNoMoreInteractions(handler)

@@ -147,7 +147,8 @@ class NMEAParser @JvmOverloads constructor(
         prn: Int,
         elevation: Float,
         azimuth: Float,
-        snr: Int
+        snr: Int,
+        isGN: Boolean
     ) {
         newSatellite(index, satellites, prn, elevation, azimuth, snr)
         yieldSatellites()
@@ -159,7 +160,8 @@ class NMEAParser @JvmOverloads constructor(
         prns: Set<Int?>?,
         pdop: Float,
         hdop: Float,
-        vdop: Float
+        vdop: Float,
+        isGN: Boolean
     ) {
         activeSatellites = prns
         yieldSatellites()

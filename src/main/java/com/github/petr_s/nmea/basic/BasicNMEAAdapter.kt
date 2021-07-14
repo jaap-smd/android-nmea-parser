@@ -39,7 +39,8 @@ class BasicNMEAAdapter : BasicNMEAHandler {
         prn: Int,
         elevation: Float,
         azimuth: Float,
-        snr: Int
+        snr: Int,
+        isGN: Boolean
     ) {
     }
 
@@ -49,7 +50,8 @@ class BasicNMEAAdapter : BasicNMEAHandler {
         prns: Set<Int?>?,
         pdop: Float,
         hdop: Float,
-        vdop: Float
+        vdop: Float,
+        isGN: Boolean
     ) {
     }
 
