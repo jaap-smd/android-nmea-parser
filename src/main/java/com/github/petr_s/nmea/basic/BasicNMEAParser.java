@@ -162,7 +162,8 @@ public class BasicNMEAParser {
             if (ms != null) {
                 time += ms * 1000;
             }
-            if (Status.valueOf(matcher.nextString("status")) == Status.A) {
+            Status status = Status.valueOf(matcher.nextString("status"));
+            if (status == Status.A) {
                 double latitude = toDegrees(matcher.nextInt("degrees"),
                         matcher.nextFloat("minutes"));
                 VDir vDir = VDir.valueOf(matcher.nextString("vertical-direction"));
@@ -181,8 +182,10 @@ public class BasicNMEAParser {
                  */
                 String modeIndicator = matcher.nextString("faa");
 
-                handler.onRMC(date,
+                handler.onRMC(
+                        date,
                         time,
+                        status.toString(),
                         vDir.equals(VDir.N) ? latitude : -latitude,
                         hDir.equals(HDir.E) ? longitude : -longitude,
                         speed,
@@ -193,8 +196,23 @@ public class BasicNMEAParser {
                         isGN
                         );
 
-                return true;
+            } else {
+                handler.onRMC(
+                        null,
+                        time,
+                        status.toString(),
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        isGN
+                );
             }
+
+            return true;
         }
 
         return false;

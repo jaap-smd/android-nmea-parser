@@ -101,21 +101,22 @@ class NMEAParser @JvmOverloads constructor(
 
     @Synchronized
     override fun onRMC(
-        date: Long,
+        date: Long?,
         time: Long,
-        latitude: Double,
-        longitude: Double,
-        speed: Float,
-        direction: Float,
+        posStatus: String,
+        latitude: Double?,
+        longitude: Double?,
+        speed: Float?,
+        direction: Float?,
         magVar: Float?,
         magVarDir: String?,
         faa: String?,
         isGN: Boolean
     ) {
         newLocation(time)
-        location!!.time = date or time
-        location!!.speed = speed
-        location!!.bearing = direction
+        location!!.time = date?.or(time) ?: time
+        location!!.speed = speed ?: -1F
+        location!!.bearing = direction ?: -1F
         yieldLocation(time, FLAG_RMC)
     }
 

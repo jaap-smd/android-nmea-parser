@@ -6,12 +6,13 @@ import com.github.petr_s.nmea.basic.BasicNMEAHandler.FixType
 class BasicNMEAAdapter : BasicNMEAHandler {
     override fun onStart() {}
     override fun onRMC(
-        date: Long,
+        date: Long?,
         time: Long,
-        latitude: Double,
-        longitude: Double,
-        speed: Float,
-        direction: Float,
+        posStatus: String,
+        latitude: Double?,
+        longitude: Double?,
+        speed: Float?,
+        direction: Float?,
         magVar: Float?,
         magVarDir: String?,
         modeInc: String?,

@@ -8,6 +8,7 @@ interface BasicNMEAHandler {
      *
      * @param date      milliseconds since midnight, January 1, 1970 UTC.
      * @param time      actual UTC time (without date)
+     * @param posStatus position status (A = data valid, V = data invalid)
      * @param latitude  angular y position on the Earth.
      * @param longitude angular x position on the Earth.
      * @param speed     in meters per second.
@@ -18,12 +19,13 @@ interface BasicNMEAHandler {
      * @param isGN      returns true if sentence was GNRMC, false is sentence was GPRMC
      */
     fun onRMC(
-        date: Long,
+        date: Long?,
         time: Long,
-        latitude: Double,
-        longitude: Double,
-        speed: Float,
-        direction: Float,
+        posStatus: String,
+        latitude: Double?,
+        longitude: Double?,
+        speed: Float?,
+        direction: Float?,
         magVar: Float?,
         magVarDir: String?,
         modeInc: String?,

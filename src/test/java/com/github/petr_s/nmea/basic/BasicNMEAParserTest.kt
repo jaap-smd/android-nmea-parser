@@ -46,6 +46,7 @@ class BasicNMEAParserTest {
         Mockito.verify(handler).onRMC(
             ArgumentMatchers.eq(1460937600000L),
             ArgumentMatchers.eq(59647000L),
+            ArgumentMatchers.isNull(String::class.java),
             ArgumentMatchers.doubleThat(Helper.roughlyEq(50.07914)),
             ArgumentMatchers.doubleThat(Helper.roughlyEq(14.39825)),
             ArgumentMatchers.floatThat(Helper.roughlyEq(0.02057f)),
@@ -68,6 +69,7 @@ class BasicNMEAParserTest {
         Mockito.verify(handler).onRMC(
             ArgumentMatchers.eq(1465776000000L),
             ArgumentMatchers.eq(34773400L),
+            ArgumentMatchers.isNull(String::class.java),
             ArgumentMatchers.doubleThat(Helper.roughlyEq(50.075415)),
             ArgumentMatchers.doubleThat(Helper.roughlyEq(14.404795)),
             ArgumentMatchers.floatThat(Helper.roughlyEq(0.142501f)),
@@ -90,6 +92,7 @@ class BasicNMEAParserTest {
         Mockito.verify(handler).onRMC(
             ArgumentMatchers.eq(1460937600000L),
             ArgumentMatchers.eq(59647000L),
+            ArgumentMatchers.isNull(String::class.java),
             ArgumentMatchers.doubleThat(Helper.roughlyEq(50.07914)),
             ArgumentMatchers.doubleThat(Helper.roughlyEq(14.39825)),
             ArgumentMatchers.floatThat(Helper.roughlyEq(0.02057f)),
