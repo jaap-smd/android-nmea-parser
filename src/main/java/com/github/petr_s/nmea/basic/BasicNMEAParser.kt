@@ -1,24 +1,7 @@
 package com.github.petr_s.nmea.basic
 
-//import com.github.petr_s.nmea.basic.BasicNMEAHandler.onRMC
-//import com.github.petr_s.nmea.basic.BasicNMEAHandler.onGGA
-//import com.github.petr_s.nmea.basic.BasicNMEAHandler.onGSV
-//import com.github.petr_s.nmea.basic.BasicNMEAHandler.onGSA
-//import com.github.petr_s.nmea.basic.BasicNMEAHandler.onStart
-//import com.github.petr_s.nmea.basic.BasicNMEAHandler.onBadChecksum
-//import com.github.petr_s.nmea.basic.BasicNMEAHandler.onUnrecognized
-//import com.github.petr_s.nmea.basic.BasicNMEAHandler.onFinished
-//import com.github.petr_s.nmea.basic.BasicNMEAHandler.onException
-//import com.github.petr_s.nmea.basic.BasicNMEAHandler
-//import com.github.petr_s.nmea.basic.BasicNMEAParser
-//import com.github.petr_s.nmea.basic.BasicNMEAParser.VDir
-//import com.github.petr_s.nmea.basic.BasicNMEAParser.HDir
-//import com.github.petr_s.nmea.basic.BasicNMEAParser.FFA
-//import com.github.petr_s.nmea.basic.BasicNMEAParser.StringType
-//import com.github.petr_s.nmea.basic.BasicNMEAParser.ParsingFunction
 import kotlin.Throws
 import java.lang.Exception
-//import com.github.petr_s.nmea.basic.BasicNMEAParser.ExMatcher
 import com.github.petr_s.nmea.basic.BasicNMEAHandler.FixQuality
 import com.github.petr_s.nmea.basic.BasicNMEAHandler.FixType
 import java.io.UnsupportedEncodingException
@@ -444,7 +427,7 @@ class BasicNMEAParser(private val handler: BasicNMEAHandler?) {
         abstract fun parse(handler: BasicNMEAHandler?, sentence: String): Boolean
     }
 
-    private class ExMatcher internal constructor(var original: Matcher) {
+    private class ExMatcher(var original: Matcher) {
         var index = 0
 
         init {
