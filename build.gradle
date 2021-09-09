@@ -1,28 +1,38 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+//apply plugin: 'jacoco'
+//apply plugin: 'com.github.kt3k.coveralls'
+
+
 buildscript {
+    ext.kotlin_version = '1.5.21'
     repositories {
         mavenCentral()
-        jcenter()
+        google()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.0.0'
-        classpath 'com.dicedmelon.gradle:jacoco-android:0.1.1'
-        classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.4.0'
+        classpath 'com.android.tools.build:gradle:4.2.2'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+//        classpath "gradle.plugin.org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.12.0"
     }
 }
 
-apply plugin: 'com.android.library'
-apply plugin: 'jacoco-android'
-apply plugin: 'com.github.kt3k.coveralls'
-apply from: 'maven-push.gradle'
-
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion '23.0.2'
+    compileSdkVersion 30
+    buildToolsVersion '30.0.3'
 
     defaultConfig {
-        minSdkVersion 15
+        minSdkVersion 21
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 
     buildTypes {
@@ -34,15 +44,13 @@ android {
 
 repositories {
     mavenCentral()
+    google()
 }
 
 dependencies {
-    compile 'com.google.android:android:4.1.1.4'
-    testCompile 'junit:junit:4.12'
-    testCompile "org.mockito:mockito-core:1.9.5"
-}
-
-coveralls {
-    jacocoReportPath = "${buildDir}/reports/jacoco/jacocoTestDebugUnitTestReport/jacocoTestDebugUnitTestReport.xml"
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation "org.mockito:mockito-core:3.9.0"
+    testImplementation "org.mockito:mockito-inline:3.9.0"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
 
