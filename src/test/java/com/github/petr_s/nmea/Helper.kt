@@ -6,7 +6,7 @@ import org.mockito.ArgumentMatcher
 import kotlin.math.abs
 
 object Helper {
-    @JvmOverloads
+    @JvmStatic
     fun roughlyEq(expected: Double, delta: Double = 0.0001): ArgumentMatcher<Double> {
         return object : ArgumentMatcher<Double> {
             override fun matches(argument: Double): Boolean {
@@ -21,7 +21,7 @@ object Helper {
         }
     }
 
-    @JvmOverloads
+    @JvmStatic
     fun roughlyEq(expected: Float, delta: Float = 0.0001f): ArgumentMatcher<Float> {
         return object : ArgumentMatcher<Float> {
             override fun matches(argument: Float): Boolean {
@@ -36,6 +36,7 @@ object Helper {
         }
     }
 
+    @JvmStatic
     fun <T> eq(expected: Set<T>): ArgumentMatcher<Set<*>> {
         return object : ArgumentMatcher<Set<*>> {
             override fun matches(argument: Set<*>): Boolean {
@@ -48,6 +49,7 @@ object Helper {
         }
     }
 
+    @JvmStatic
     fun <T> eq(expected: List<T>): ArgumentMatcher<List<*>> {
         return object : ArgumentMatcher<List<*>> {
             override fun matches(argument: List<*>): Boolean {

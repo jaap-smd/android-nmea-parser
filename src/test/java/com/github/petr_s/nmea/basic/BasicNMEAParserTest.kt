@@ -137,13 +137,13 @@ class BasicNMEAParserTest {
         Mockito.verify(handler).onStart()
         Mockito.verify(handler).onGGA(
             ArgumentMatchers.eq(59647000L),
-            ArgumentMatchers.doubleThat(Helper.roughlyEq(50.07914)),
-            ArgumentMatchers.doubleThat(Helper.roughlyEq(14.39825)),
-            ArgumentMatchers.floatThat(Helper.roughlyEq(240.2f)),
+            ArgumentMatchers.eq(50.079141664505),
+            ArgumentMatchers.eq(14.398259989420573),
+            ArgumentMatchers.eq(240.20001f),
             ArgumentMatchers.eq(FixQuality.GPS),
             ArgumentMatchers.eq(7),
-            ArgumentMatchers.floatThat(Helper.roughlyEq(1.7f)),
-            ArgumentMatchers.isNull(Float::class.java),
+            ArgumentMatchers.eq(1.7f),
+            ArgumentMatchers.isNull(),
             ArgumentMatchers.eq(0),
             ArgumentMatchers.eq(false)
         )
