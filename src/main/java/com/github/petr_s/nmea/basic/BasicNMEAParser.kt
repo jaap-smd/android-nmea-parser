@@ -37,7 +37,8 @@ class BasicNMEAParser(private val handler: BasicNMEAHandler?) {
                     "(\\d{6})?" + COMMA +
                     CAP_FLOAT + "?" + COMMA +
                     regexify(HDir::class.java) + "?" + COMMA + "?" +
-                    regexify(FFA::class.java) + "?"
+                    regexify(FFA::class.java) + "?" + COMMA + "?" +
+                    "([A-Z]+)?"
         )
         private val GPGGA = Pattern.compile(
             "(\\d{5})?" +
@@ -95,6 +96,29 @@ class BasicNMEAParser(private val handler: BasicNMEAHandler?) {
                     CAP_FLOAT + "?" + COMMA +
                     CAP_FLOAT + "?" + COMMA +
                     CAP_FLOAT + "?"
+        )
+
+        private val GPGSA2 = Pattern.compile(
+            regexify(
+                Mode::class.java
+            ) + COMMA +
+                    "(\\d)" + COMMA +
+                    "(\\d{2})?" + COMMA +
+                    "(\\d{2})?" + COMMA +
+                    "(\\d{2})?" + COMMA +
+                    "(\\d{2})?" + COMMA +
+                    "(\\d{2})?" + COMMA +
+                    "(\\d{2})?" + COMMA +
+                    "(\\d{2})?" + COMMA +
+                    "(\\d{2})?" + COMMA +
+                    "(\\d{2})?" + COMMA +
+                    "(\\d{2})?" + COMMA +
+                    "(\\d{2})?" + COMMA +
+                    CAP_FLOAT + "?" + COMMA +
+                    CAP_FLOAT + "?" + COMMA +
+                    CAP_FLOAT + "?" + COMMA +
+                    CAP_FLOAT + "?" + COMMA +
+                    "(\\d)?"
         )
         private val functions = HashMap<StringType, ParsingFunction>()
         @Throws(Exception::class)
@@ -259,7 +283,7 @@ class BasicNMEAParser(private val handler: BasicNMEAHandler?) {
             sentence: String,
             stringType: StringType
         ): Boolean {
-            val matcher = ExMatcher(GPGSA.matcher(sentence))
+            var matcher = ExMatcher(GPGSA.matcher(sentence))
             if (matcher.matches()) {
                 val isGN = stringType == StringType.GNGSA
 
@@ -278,10 +302,35 @@ class BasicNMEAParser(private val handler: BasicNMEAHandler?) {
                 val pdop = matcher.nextFloat("pdop")
                 val hdop = matcher.nextFloat("hdop")
                 val vdop = matcher.nextFloat("vdop")
+                handler!!.onGSA(mode.toString(), type, prns, pdop, hdop, vdop, isGN)
+                return true
+            }
+
+            matcher = ExMatcher(GPGSA2.matcher(sentence))
+            if (matcher.matches()) {
+                val isGN = stringType == StringType.GNGSA
+
+                /*
+             * A = Automatic 2D/3D
+             * M = Manual, forced to operate in 2D or 3D
+             */
+                val mode = matcher.nextString("mode")?.let { Mode.valueOf(it) }
+                val type = matcher.nextInt("fix-type")?.let { FixType.values()[it] }
+                val prns: MutableSet<Int?> = HashSet()
+                for (i in 0..11) {
+                    matcher.nextInt("prn")?.let {
+                        prns.add(it)
+                    }
+                }
+                val pdop = matcher.nextFloat("pdop")
+                val hdop = matcher.nextFloat("hdop")
+                val vdop = matcher.nextFloat("vdop")
+                val systemID = matcher.nextInt("systemID")
                 //TODO parse systemID
                 handler!!.onGSA(mode.toString(), type, prns, pdop, hdop, vdop, isGN)
                 return true
             }
+
             return false
         }
 
