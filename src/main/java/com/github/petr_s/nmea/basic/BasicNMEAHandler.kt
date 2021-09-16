@@ -20,8 +20,8 @@ interface BasicNMEAHandler {
      */
     fun onRMC(
         date: Long?,
-        time: Long,
-        posStatus: String,
+        time: Long?,
+        posStatus: String?,
         latitude: Double?,
         longitude: Double?,
         speed: Float?,
@@ -46,13 +46,13 @@ interface BasicNMEAHandler {
      * @param isGN        returns true if sentence was GNGGA, false is sentence was GPGGA
      */
     fun onGGA(
-        time: Long,
-        latitude: Double,
-        longitude: Double,
-        altitude: Float,
+        time: Long?,
+        latitude: Double?,
+        longitude: Double?,
+        altitude: Float?,
         quality: FixQuality?,
-        satellites: Int,
-        hdop: Float,
+        satellites: Int?,
+        hdop: Float?,
         age: Float?,
         station: Int?,
         isGN: Boolean
@@ -69,7 +69,13 @@ interface BasicNMEAHandler {
      * @param azimuth    azimuth in degrees
      * @param snr        signal to noise ratio
      */
-    fun onGSV(satellites: Int, index: Int, prn: Int, elevation: Float, azimuth: Float, snr: Int, isGN: Boolean)
+    fun onGSV(satellites: Int?,
+              index: Int?,
+              prn: Int?,
+              elevation: Float?,
+              azimuth: Float?,
+              snr: Int?,
+              isGN: Boolean)
 
     /***
      * Called on GPGSA parsed.
@@ -85,9 +91,9 @@ interface BasicNMEAHandler {
         mode: String?,
         type: FixType?,
         prns: Set<Int?>?,
-        pdop: Float,
-        hdop: Float,
-        vdop: Float,
+        pdop: Float?,
+        hdop: Float?,
+        vdop: Float?,
         isGN: Boolean
     )
 
