@@ -37,7 +37,8 @@ class BasicNMEAParser(private val handler: BasicNMEAHandler?) {
                     "(\\d{6})?" + COMMA +
                     CAP_FLOAT + "?" + COMMA +
                     regexify(HDir::class.java) + "?" + COMMA + "?" +
-                    regexify(FFA::class.java) + "?"
+                    regexify(FFA::class.java) + "?" + COMMA + "?" +
+                    "([A-Z]+)?"
         )
         private val GPGGA = Pattern.compile(
             "(\\d{5})?" +
@@ -96,6 +97,29 @@ class BasicNMEAParser(private val handler: BasicNMEAHandler?) {
                     CAP_FLOAT + "?" + COMMA +
                     CAP_FLOAT + "?"
         )
+
+        private val GPGSA2 = Pattern.compile(
+            regexify(
+                Mode::class.java
+            ) + COMMA +
+                    "(\\d)" + COMMA +
+                    "(\\d{2})?" + COMMA +
+                    "(\\d{2})?" + COMMA +
+                    "(\\d{2})?" + COMMA +
+                    "(\\d{2})?" + COMMA +
+                    "(\\d{2})?" + COMMA +
+                    "(\\d{2})?" + COMMA +
+                    "(\\d{2})?" + COMMA +
+                    "(\\d{2})?" + COMMA +
+                    "(\\d{2})?" + COMMA +
+                    "(\\d{2})?" + COMMA +
+                    "(\\d{2})?" + COMMA +
+                    CAP_FLOAT + "?" + COMMA +
+                    CAP_FLOAT + "?" + COMMA +
+                    CAP_FLOAT + "?" + COMMA +
+                    CAP_FLOAT + "?" + COMMA +
+                    "(\\d)?"
+        )
         private val functions = HashMap<StringType, ParsingFunction>()
         @Throws(Exception::class)
         private fun parseGPRMC(
@@ -113,19 +137,21 @@ class BasicNMEAParser(private val handler: BasicNMEAHandler?) {
                 }
                 val status = Status.valueOf(matcher.nextString("status")!!)
                 if (status == Status.A) {
-                    val latitude = toDegrees(
-                        matcher.nextInt("degrees")!!,
-                        matcher.nextFloat("minutes")!!
-                    )
-                    val vDir = VDir.valueOf(matcher.nextString("vertical-direction")!!)
-                    val longitude = toDegrees(
-                        matcher.nextInt("degrees")!!,
-                        matcher.nextFloat("minutes")!!
-                    )
-                    val hDir = HDir.valueOf(matcher.nextString("horizontal-direction")!!)
-                    val speed = matcher.nextFloat("speed")!! * KNOTS2MPS
+                    val latDeg = matcher.nextInt("degrees")
+                    val latMin = matcher.nextFloat("minutes")
+                    val latitude = if(latDeg != null && latMin != null) toDegrees(latDeg, latMin) else null
+
+                    val vDir = matcher.nextString("vertical-direction")?.let { VDir.valueOf(it) }
+
+
+                    val lonDeg = matcher.nextInt("degrees")
+                    val lonMin = matcher.nextFloat("minutes")
+                    val longitude = if(lonDeg != null && lonMin != null) toDegrees(lonDeg, lonMin) else null
+
+                    val hDir = matcher.nextString("horizontal-direction")?.let { HDir.valueOf(it) }
+                    val speed = matcher.nextFloat("speed")?.times(KNOTS2MPS)
                     val direction = matcher.nextFloat("direction", 0.0f)
-                    val date = DATE_FORMAT.parse(matcher.nextString("date")).time
+                    val date = matcher.nextString("date")?.let { DATE_FORMAT.parse(it).time }
                     val magVar = matcher.nextFloat("magnetic-variation")
                     val magVarDir = matcher.nextString("direction")
 
@@ -138,8 +164,8 @@ class BasicNMEAParser(private val handler: BasicNMEAHandler?) {
                         date,
                         time,
                         status.toString(),
-                        if (vDir == VDir.N) latitude else -latitude,
-                        if (hDir == HDir.E) longitude else -longitude,
+                        if(latitude != null && vDir != null) { if (vDir == VDir.N) latitude else -latitude } else null,
+                        if(longitude != null && hDir != null) { if (hDir == HDir.E) longitude else -longitude } else null,
                         speed,
                         direction,
                         magVar,
@@ -181,28 +207,31 @@ class BasicNMEAParser(private val handler: BasicNMEAHandler?) {
                 if (ms != null) {
                     time += (ms * 1000).toLong()
                 }
-                val latitude = toDegrees(
-                    matcher.nextInt("degrees")!!,
-                    matcher.nextFloat("minutes")!!
-                )
-                val vDir = VDir.valueOf(matcher.nextString("vertical-direction")!!)
-                val longitude = toDegrees(
-                    matcher.nextInt("degrees")!!,
-                    matcher.nextFloat("minutes")!!
-                )
-                val hDir = HDir.valueOf(matcher.nextString("horizontal-direction")!!)
-                val quality = FixQuality.values()[matcher.nextInt("quality")!!]
-                val satellites = matcher.nextInt("n-satellites")!!
-                val hdop = matcher.nextFloat("hdop")!!
-                val altitude = matcher.nextFloat("altitude")!!
-                val separation = matcher.nextFloat("separation")!!
-                val age = matcher.nextFloat("age")!!
-                val station = matcher.nextInt("station")!!
+
+                val latDeg = matcher.nextInt("degrees")
+                val latMin = matcher.nextFloat("minutes")
+
+                val latitude = if(latDeg != null && latMin != null) toDegrees(latDeg, latMin) else null
+
+                val vDir = matcher.nextString("vertical-direction")?.let { VDir.valueOf(it) }
+
+                val lonDeg = matcher.nextInt("degrees")
+                val lonMin = matcher.nextFloat("minutes")
+                val longitude = if(lonDeg != null && lonMin != null) toDegrees(lonDeg, lonMin) else null
+
+                val hDir = matcher.nextString("horizontal-direction")?.let { HDir.valueOf(it) }
+                val quality = matcher.nextInt("quality")?.let { FixQuality.values()[it] }
+                val satellites = matcher.nextInt("n-satellites")
+                val hdop = matcher.nextFloat("hdop")
+                val altitude = matcher.nextFloat("altitude")
+                val separation = matcher.nextFloat("separation")
+                val age = matcher.nextFloat("age")
+                val station = matcher.nextInt("station")
                 handler!!.onGGA(
                     time,
-                    if (vDir == VDir.N) latitude else -latitude,
-                    if (hDir == HDir.E) longitude else -longitude,
-                    altitude - separation,
+                    if(latitude != null && vDir != null) { if (vDir == VDir.N) latitude else -latitude } else null,
+                    if(longitude != null && hDir != null) { if (hDir == HDir.E) longitude else -longitude } else null,
+                    if(altitude != null && separation != null) altitude - separation else null,
                     quality,
                     satellites,
                     hdop,
@@ -225,20 +254,20 @@ class BasicNMEAParser(private val handler: BasicNMEAHandler?) {
             if (matcher.matches()) {
                 val isGN = type == StringType.GNGSV
                 val sentences = matcher.nextInt("n-sentences")
-                val index = matcher.nextInt("sentence-index")!! - 1
-                val satellites = matcher.nextInt("n-satellites")!!
+                val index = matcher.nextInt("sentence-index")?.minus(1)
+                val satellites = matcher.nextInt("n-satellites")
                 for (i in 0..3) {
                     val prn = matcher.nextInt("prn")
-                    val elevation = matcher.nextInt("elevation")!!
-                    val azimuth = matcher.nextInt("azimuth")!!
-                    val snr = matcher.nextInt("snr")!!
+                    val elevation = matcher.nextInt("elevation")
+                    val azimuth = matcher.nextInt("azimuth")
+                    val snr = matcher.nextInt("snr")
                     if (prn != null) {
                         handler!!.onGSV(
                             satellites,
-                            index * 4 + i,
+                            index?.times(4)?.plus(i),
                             prn,
-                            elevation.toFloat(),
-                            azimuth.toFloat(),
+                            elevation?.toFloat(),
+                            azimuth?.toFloat(),
                             snr,
                             isGN
                         )
@@ -254,7 +283,7 @@ class BasicNMEAParser(private val handler: BasicNMEAHandler?) {
             sentence: String,
             stringType: StringType
         ): Boolean {
-            val matcher = ExMatcher(GPGSA.matcher(sentence))
+            var matcher = ExMatcher(GPGSA.matcher(sentence))
             if (matcher.matches()) {
                 val isGN = stringType == StringType.GNGSA
 
@@ -262,22 +291,46 @@ class BasicNMEAParser(private val handler: BasicNMEAHandler?) {
              * A = Automatic 2D/3D
              * M = Manual, forced to operate in 2D or 3D
              */
-                val mode = Mode.valueOf(matcher.nextString("mode")!!)
-                val type = FixType.values()[matcher.nextInt("fix-type")!!]
+                val mode = matcher.nextString("mode")?.let { Mode.valueOf(it) }
+                val type = matcher.nextInt("fix-type")?.let { FixType.values()[it] }
                 val prns: MutableSet<Int?> = HashSet()
                 for (i in 0..11) {
-                    val prn = matcher.nextInt("prn")
-                    if (prn != null) {
-                        prns.add(prn)
+                    matcher.nextInt("prn")?.let {
+                        prns.add(it)
                     }
                 }
-                val pdop = matcher.nextFloat("pdop")!!
-                val hdop = matcher.nextFloat("hdop")!!
-                val vdop = matcher.nextFloat("vdop")!!
+                val pdop = matcher.nextFloat("pdop")
+                val hdop = matcher.nextFloat("hdop")
+                val vdop = matcher.nextFloat("vdop")
+                handler!!.onGSA(mode.toString(), type, prns, pdop, hdop, vdop, isGN)
+                return true
+            }
+
+            matcher = ExMatcher(GPGSA2.matcher(sentence))
+            if (matcher.matches()) {
+                val isGN = stringType == StringType.GNGSA
+
+                /*
+             * A = Automatic 2D/3D
+             * M = Manual, forced to operate in 2D or 3D
+             */
+                val mode = matcher.nextString("mode")?.let { Mode.valueOf(it) }
+                val type = matcher.nextInt("fix-type")?.let { FixType.values()[it] }
+                val prns: MutableSet<Int?> = HashSet()
+                for (i in 0..11) {
+                    matcher.nextInt("prn")?.let {
+                        prns.add(it)
+                    }
+                }
+                val pdop = matcher.nextFloat("pdop")
+                val hdop = matcher.nextFloat("hdop")
+                val vdop = matcher.nextFloat("vdop")
+                val systemID = matcher.nextInt("systemID")
                 //TODO parse systemID
                 handler!!.onGSA(mode.toString(), type, prns, pdop, hdop, vdop, isGN)
                 return true
             }
+
             return false
         }
 

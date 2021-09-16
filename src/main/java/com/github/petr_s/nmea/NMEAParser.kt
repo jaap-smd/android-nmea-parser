@@ -102,8 +102,8 @@ class NMEAParser @JvmOverloads constructor(
     @Synchronized
     override fun onRMC(
         date: Long?,
-        time: Long,
-        posStatus: String,
+        time: Long?,
+        posStatus: String?,
         latitude: Double?,
         longitude: Double?,
         speed: Float?,
@@ -113,45 +113,50 @@ class NMEAParser @JvmOverloads constructor(
         faa: String?,
         isGN: Boolean
     ) {
-        newLocation(time)
-        location!!.time = date?.or(time) ?: time
-        location!!.speed = speed ?: -1F
-        location!!.bearing = direction ?: -1F
-        yieldLocation(time, FLAG_RMC)
+        time?.let {
+            newLocation(time)
+            location!!.time = date?.or(time) ?: time
+            location!!.speed = speed ?: -1F
+            location!!.bearing = direction ?: -1F
+            yieldLocation(time, FLAG_RMC)
+        }
     }
 
     @Synchronized
     override fun onGGA(
-        time: Long,
-        latitude: Double,
-        longitude: Double,
-        altitude: Float,
+        time: Long?,
+        latitude: Double?,
+        longitude: Double?,
+        altitude: Float?,
         quality: FixQuality?,
-        satellites: Int,
-        hdop: Float,
+        satellites: Int?,
+        hdop: Float?,
         age: Float?,
         station: Int?,
         isGN: Boolean
     ) {
-        newLocation(time)
-        location!!.latitude = latitude
-        location!!.longitude = longitude
-        location!!.altitude = altitude.toDouble()
-        location!!.accuracy = hdop * 4.0f
-        yieldLocation(time, FLAG_GGA)
+        time?.let {
+            newLocation(time)
+            location!!.latitude = latitude ?: 0.0
+            location!!.longitude = longitude ?: 0.0
+            location!!.altitude = altitude?.toDouble() ?: 0.0
+            location!!.accuracy = hdop?.times(4.0f) ?: 0f
+            yieldLocation(time, FLAG_GGA)
+        }
     }
 
     @Synchronized
     override fun onGSV(
-        satellites: Int,
-        index: Int,
-        prn: Int,
-        elevation: Float,
-        azimuth: Float,
-        snr: Int,
+        satellites: Int?,
+        index: Int?,
+        prn: Int?,
+        elevation: Float?,
+        azimuth: Float?,
+        snr: Int?,
         isGN: Boolean
     ) {
-        newSatellite(index, satellites, prn, elevation, azimuth, snr)
+        if(index!= null && satellites != null && prn != null && elevation != null && azimuth != null && snr != null)
+            newSatellite(index, satellites, prn, elevation, azimuth, snr)
         yieldSatellites()
     }
 
@@ -159,9 +164,9 @@ class NMEAParser @JvmOverloads constructor(
         mode: String?,
         type: FixType?,
         prns: Set<Int?>?,
-        pdop: Float,
-        hdop: Float,
-        vdop: Float,
+        pdop: Float?,
+        hdop: Float?,
+        vdop: Float?,
         isGN: Boolean
     ) {
         activeSatellites = prns
