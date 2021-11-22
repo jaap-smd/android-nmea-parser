@@ -1,23 +1,19 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
-//apply plugin: 'jacoco'
-//apply plugin: 'com.github.kt3k.coveralls'
-
 
 buildscript {
-    ext.kotlin_version = '1.5.21'
+    ext.kotlin_version = '1.6.0'
     repositories {
         mavenCentral()
         google()
-        maven {
-            url "https://plugins.gradle.org/m2/"
-        }
+//        maven {
+//            url "https://plugins.gradle.org/m2/"
+//        }
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.2.2'
+        classpath "com.android.tools.build:gradle:7.0.2"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-//        classpath "gradle.plugin.org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.12.0"
     }
 }
 
@@ -27,7 +23,7 @@ android {
     buildToolsVersion '30.0.3'
 
     defaultConfig {
-        minSdkVersion 21
+        minSdkVersion 24
     }
 
     compileOptions {
@@ -37,7 +33,7 @@ android {
 
     buildTypes {
         debug {
-            testCoverageEnabled true
+            testCoverageEnabled false
         }
     }
 }
@@ -49,8 +45,7 @@ repositories {
 
 dependencies {
     testImplementation 'junit:junit:4.13.2'
-    testImplementation "org.mockito:mockito-core:3.9.0"
-    testImplementation "org.mockito:mockito-inline:3.9.0"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-}
 
+
+}
