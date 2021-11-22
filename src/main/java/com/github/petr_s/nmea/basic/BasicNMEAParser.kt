@@ -1,5 +1,6 @@
 package com.github.petr_s.nmea.basic
 
+import android.util.Log
 import kotlin.Throws
 import java.lang.Exception
 import com.github.petr_s.nmea.basic.BasicNMEAHandler.FixQuality
@@ -420,6 +421,7 @@ class BasicNMEAParser(private val handler: BasicNMEAHandler?) {
 
     @Synchronized
     fun parse(sentence: String?) {
+        val TAG = "BasicNMEAParser:parse"
         if (sentence == null) {
             throw NullPointerException()
         }
@@ -439,9 +441,11 @@ class BasicNMEAParser(private val handler: BasicNMEAHandler?) {
                             handler, content
                         )
                 ) {
+                    Log.e(TAG, "after else if: Unrecognized sentence: $sentence")
                     handler.onUnrecognized(sentence)
                 }
             } else {
+                Log.e(TAG, "matcher does not match: Unrecognized sentence: $sentence")
                 handler.onUnrecognized(sentence)
             }
         } catch (e: Exception) {
